@@ -1,64 +1,78 @@
-# 星辰语义大模型 · Xing4.1-Preview
+<div align="center">
+<h1>
+  Xing4.1-Preview
+</h1>
+</div>
 
-🦉 [GitHub](https://github.com/XingChen-AGI/Xing4.1-Preview) · 🤗 [Hugging Face](https://huggingface.co/XingChen-AGI/Xing4.1-Preview) · 🤖 [ModelScope](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview) · 🪐 [Modelers](https://modelers.cn/models/XingChen-AGI/Xing4.1-Preview) · 📖 [English](./README_EN.md)
+<p align="center"><b>全栈国产化训练——8192 张昇腾（Ascend）910C 芯片 + 国产框架 MindSpore + 自研训练系统，端到端完成预训练。<br>主力级能力、轻量级成本——总参数 285B、单次激活 17B 的 MoE 模型，专为智能体编程（Agentic Coding）与长程智能体任务打造，原生 1M 上下文。</b></p>
+
+<p align="center">
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview" target="_blank">GitHub</a> · <a href="https://huggingface.co/XingChen-AGI/Xing4.1-Preview" target="_blank">Hugging Face</a> · <a href="https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview" target="_blank">魔搭 ModelScope</a> · <a href="https://modelers.cn/user/XingChen-AGI" target="_blank">魔乐 Modelers</a> · <a href="https://atomgit.com/XingChen-AGI" target="_blank">AtomGit</a> · <a href="https://www.teleai.com.cn/" target="_blank">天翼 AI 开放平台</a> · <a href="./README.md">English</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview"><img alt="Parameters" src="https://img.shields.io/badge/Params-285B%20%2F%2017B%20active-7C3AED"></a>
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview"><img alt="Context" src="https://img.shields.io/badge/Context-1M%20native-orange"></a>
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue"></a>
+</p>
 
 # 目录
 
-- [介绍](#介绍)
-- [模型](#模型)
-- [能力评估](#能力评估)
+- [简介](#简介)
+- [最新动态](#最新动态)
+- [模型架构](#模型架构)
+- [评测](#评测)
 - [快速开始](#快速开始)
-  - [本地推理](#本地推理)
-  - [服务化推理](#服务化推理)
-    - [vLLM](#vllm)
-    - [SGLang](#sglang)
-    - [KTransformers](#ktransformers)
-    - [FlagOS](#flagos)
-  - [超参选择](#超参选择)
-    - [Xing4.1-Preview 模型推理参数选择](#xing41-preview-模型推理参数选择)
-- [微调](#微调)
-- [声明与引用](#声明与引用)
-  - [声明](#声明)
-  - [引用](#引用)
+- [应用场景](#应用场景)
+- [免责声明](#免责声明)
+- [协议与引用](#协议与引用)
 
-# 介绍
+# 简介
 
-**Xing 4** 由中电信人工智能科技有限公司研发，是星辰语义大模型系列（原 TeleChat）的新一代模型，**完全基于国产昇腾 NPU 平台训练**，面向长上下文推理、代码生成和智能体应用场景。
+**Xing4.1-Preview** 是星辰系列（Xing，前身为 [TeleChat](https://github.com/Tele-AI/TeleChat3)）的最新大语言模型，由中电信人工智能科技研发。
 
-**Xing4.1-Preview** 是 Xing 4 系列模型，采用稀疏混合专家（MoE）架构，结合 Multi-head Latent Attention（MLA）与 DeepSeek Sparse Attention（DSA），面向长上下文交互、复杂推理和 Agent 工作流。
+- **全栈国产化训练链路**——8192 张昇腾（Ascend）910C 芯片 + 国产框架 MindSpore + 自研训练系统，端到端完成 285B 模型预训练；模型架构从选型阶段即针对国产芯片“矩阵算力强、向量与带宽相对受限”的硬件特征做正向协同设计，把国产算力的硬件特点转化为能力与效率优势。
+- **智能体编程与长程智能体任务**——面向需要持续推进、多轮交互才能完成的复杂任务：长上下文规划、工具调用、结构化输出与多步骤协同执行。
+- **总参数 285B / 单次激活 17B（MoE）**——以约 17B 级的推理开销，获得 285B 级模型的能力。
+- **原生 1M 上下文**——公开 API 即提供完整 1M（单次最大输入 896K / 最大输出 128K）。
+- **深度思考、结构化输出、函数调用**——思考模式支持开/关（无分档）；通过 OpenAI 兼容接口提供结构化输出与函数调用。
 
-- **面向 Agent 的架构：** 采用 45 层 MoE 主干网络，每 Token 激活 8 个路由专家。
-- **MLA + DSA：** 结合压缩 Key-Value 表示与长上下文稀疏注意力机制。
-- **长上下文：** 支持  **1M** 的配置上下文长度。
+**本版本为 Preview（预览）发布**：模型权重与 API 现已开放；评测结果见[评测](#评测)一节，技术报告已发布为 [arXiv 2611.22115](https://arxiv.org/abs/2611.22115)。
 
-# 模型
+# 最新动态
 
-| 配置项                                      | Xing4.1-Preview                     |
-| ---------------------------------------- | ----------------------------------: |
-| 总参数量                                     | **285B**                            |
-| 每 Token 激活参数量                            | 约 17B                               |
-| Transformer 层数                           | **45**                              |
-| Hidden Size                              | 4096                                |
-| Attention Heads                          | 128                                 |
-| Dense FFN Intermediate Size              | **18432**                           |
-| Expert Intermediate Size                 | 2048                                |
-| Routed Experts                           | 256                                 |
-| Active Routed Experts / Token            | 8                                   |
-| Shared Experts                           | 1                                   |
-| Dense / MoE FFN 层数                       | 3 / 42                              |
-| Attention                                | MLA + DSA                           |
-| qk Head Dimension                        | 192（NoPE 128 + RoPE 64）             |
-| v Head Dimension                         | 128                                 |
-| MLA q LoRA Rank / kv LoRA Rank           | 1536 / 512                          |
-| DSA Index Heads / Head Dimension / Top-K | 64 / 128 / 2048                     |
-| Normalization / Activation               | RMSNorm（eps 1e-5）/ SiLU             |
-| Tokenizer / Vocabulary Size              | BPE / 131072                        |
-| 最大上下文长度                                  | 1M                                  |
-| RoPE / YaRN                              | θ=100000 / factor=32（原始上下文长度 32768） |
+- 2026-11-23 开源 **Xing4.1-Preview** [[HuggingFace](https://huggingface.co/XingChen-AGI/Xing4.1-Preview) | [魔搭](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview) | [天翼 AI 开放平台](https://www.teleai.com.cn/)]
 
-模型采用 **45 层 Transformer** 主干网络，前 **3** 层使用 Dense FFN，后 **42** 层使用 MoE FFN。注意力架构结合 MLA 与 DSA。
+# 模型架构
 
-# 能力评估
+**Xing4.1-Preview** 架构如下：
+
+| | 注意力类型 | 注意力稀疏 | 路由专家 | 单 Token 激活专家 | 共享专家 | 总参/激活参数 | 上下文长度 |
+|---|---|---|---|---|---|---|---|
+| Xing4.1-Preview | MLA | DSA | 256 | Top-8 | 1 | 285B / 17B | 原生 1M |
+
+关键设计选择：
+
+- **DSA（动态稀疏注意力）**：降低长上下文注意力的计算与访存开销，同时保留以矩阵乘为核心的计算模式——这正是训练加速器最擅长的算子。
+- **"矮胖型"网络结构**：在模型规模与并行策略约束下适度增加宽度、降低深度，提升核心矩阵算子的计算规模、算术强度与数据复用效率，同时减少逐层串行开销（归一化、激活函数、算子调度与数据搬运）。
+- **MLA + DSA 协同**：MLA 低秩压缩缩小 KV Cache，DSA 减少对其的访问，两者协同缓解访存带宽瓶颈、支撑长序列高效训练。
+- **协同设计的训练 Infra**：显存分片与通信优化、分布式 Muon 优化器去冗余、DSA 长序列训练系统优化与细粒度选择性重计算四项协同，带来约 **15%–30%** 的端到端训练吞吐提升，长序列场景收益更突出。
+
+## 全栈国产化训练
+
+Xing4.1-Preview 的预训练在国产技术栈上端到端完成：**8192 张昇腾（Ascend）910C 芯片**、**MindSpore 框架**，以及在其之上自研的 HyperParallel 训练系统。算力、框架、训练系统三层协同、全栈打通：
+
+- **HyperParallel-FSDP（HSDP）**：在每个 SuperPoD 内部做参数全分片，跨 SuperPoD 复制参数——高频的 AllGather / ReduceScatter 收敛在超节点内部的高速互联域，跨节点只做粗粒度梯度 AllReduce。因此整个训练**不需要流水线并行**，也就没有流水线气泡带来的算力浪费。
+- **Owner-based Muon 优化器**：把每个矩阵的 Newton–Schulz 正交化交给分片组内的指定 Owner 节点算一次再分发，避免各节点重复还原完整矩阵、重复计算。
+- **细粒度选择性重计算**：按算子的执行时间与输出显存占用决定是否保留，而不是整层一刀切。
+- **宿主机侧调度**：训练线程绑定独占 CPU 核，系统服务与中断处理移出训练 CPU 资源池。
+- **综合效果**：端到端训练吞吐较基线提升约 **15%–30%**，长序列场景收益最大。
+
+后训练使用自研统一智能体平台 **TeleGym**，把任务执行、结果评估、轨迹构建与强化学习优化串成一条链路，并支持异步执行、有限超额采样与部分轨迹续跑。技术细节见[技术报告](https://arxiv.org/abs/2611.22115)。
+
+**开源权重的格式说明：** Xing4.1-Preview 权重的原生格式是 MindSpore 格式。考虑到开源生态中的推理与微调工具链大多以 PyTorch 为中心，我们在对外发布前把权重完整转换为 **PyTorch（Hugging Face Transformers）格式**，以 **safetensors** 分片存储。社区可以直接用 Transformers、SGLang、vLLM 等常见框架加载，无需关心训练侧的框架差异。
+
+# 评测
 
 Xing4.1-Preview 在智能体与推理类基准上与同量级 Flash 模型对比：
 
@@ -76,11 +90,11 @@ Xing4.1-Preview 在智能体与推理类基准上与同量级 Flash 模型对比
 2. † Terminal-Bench 4.0：Xing4.1-Preview 跳过了所有 GPU 沙箱类题目；
 3. ‡ HLE：Xing4.1-Preview 仅测试了 text-only 数据。
 
+该对比集覆盖智能体执行、工具调用与通用推理，各项结果互有高低，建议按自身业务场景对应的任务判断适配度，而非只看单一综合分。
+
 # 快速开始
 
-### 本地推理
-
-　　Xing4.1-Preview 已通过 [天翼 AI 开放平台](https://www.teleai.com.cn/) 提供 OpenAI 兼容 API，可快速体验：
+Xing4.1-Preview 已通过[天翼 AI 开放平台](https://www.teleai.com.cn/)提供 OpenAI 兼容 API。
 
 ```python
 from openai import OpenAI
@@ -100,71 +114,46 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-- 公开 API 提供完整 **1M** 上下文（单次请求最大输入 **896K** / 最大输出 **128K**）；
-- 支持思考模式开 / 关，以及结构化输出与函数调用。
+- **上下文窗口**：公开 API 即提供完整 **1M** 上下文（单次最大输入 **896K** / 最大输出 **128K**）。
+- **思考模式**：支持开/关（无分档）。
+- **结构化输出与函数调用**：通过 OpenAI 兼容接口支持。
 
-　　如需私有化部署，请参考下方「服务化推理」中的 vLLM / SGLang 部署文档。
+**推荐参数：** `temperature=0.8`、`top_p=1.0`、`max_tokens=128K`。
 
-### 服务化推理
-
-> [!NOTE]
-> Xing4.1-Preview 与 Xing4.0 架构不同，但保持上游接口兼容。vLLM 通过官方插件提供 `xing4_0` 推理 / 工具调用解析，SGLang 在 main 分支原生支持；昇腾 NPU 与多芯 W8A8 部署请参考对应文档。
-
-#### vLLM
-
-[vLLM](https://github.com/vllm-project/vllm) 是高吞吐、低延迟的 LLM 推理与服务引擎，可一键启动 OpenAI 兼容的 API 服务。Xing4.1-Preview 的模型本体（`deepseek_v32`）由 vLLM 原生加载，`xing4_0` 推理与工具调用解析通过官方插件 [xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin) 提供。
-
-详细部署步骤、参数说明与调用示例请参考 [Xing4.1-Preview vLLM 部署文档](./tutorial/vLLM/xing4.1-preview-vllm.md)。
-
-#### SGLang
-
-[SGLang](https://github.com/sgl-project/sglang) 是面向大语言模型的高性能服务框架，main 分支已原生支持 Xing4.1-Preview，无需额外安装插件。
-
-详细部署步骤、参数说明与调用示例请参考 [Xing4.1-Preview SGLang 部署文档](./tutorial/SGLang/xing4.1-preview-sglang.md)。
-
-#### KTransformers
+## 本地部署
 
 > [!NOTE]
-> KTransformers（以及 llama.cpp）目前仅适用于 Xing4.0 系列，**不适用于 Xing4.1-Preview**。
+> Xing4.1-Preview 沿用 Xing 4 系列的服务化栈。把 `${MODEL_PATH}` 换成本地路径或 `XingChen-AGI/Xing4.1-Preview`。该模型为 285B BF16 MoE（权重约 521 GiB），仅权重即需约 **8×80 GB** 显存（`--tensor-parallel-size 8`），上下文更长需相应增加资源。原生上下文为 1M，请按显存/节点把上下文参数（`--max-model-len` / `--context-length`）设到硬件可承载的值。parser 标识与预编译镜像 tag 以本仓库官方部署文档（[vLLM](./tutorial/vLLM/xing4.1-preview-vllm.md) / [SGLang](./tutorial/SGLang/xing4.1-preview-sglang.md) / [FlagOS](./tutorial/FlagOS/xing4.1-preview-flagos.md)）为准。
 
-#### FlagOS
+**vLLM**——官方 out-of-tree 插件（[XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin)）。模型本体（`deepseek_v32`）由 vLLM 原生加载，`xing4_0` 推理 / 工具调用解析由该插件提供；详细部署步骤、参数说明与调用示例见 [vLLM 部署文档](./tutorial/vLLM/xing4.1-preview-vllm.md)。
 
-[FlagOS](https://flagos.io/) 社区完成了 Xing4.1-Preview 的 Day0 跨芯适配，提供覆盖八个平台的 W8A8 版本。部署方法详见 [FlagOS 多芯部署指南](./tutorial/FlagOS/xing4.1-preview-flagos.md)。
+**SGLang**——main 分支原生支持，无需额外插件；详细部署步骤、参数说明与调用示例见 [SGLang 部署文档](./tutorial/SGLang/xing4.1-preview-sglang.md)。
 
-#### vLLM-Ascend（昇腾）
+**FlagOS**——社区已完成 Xing4.1-Preview 的 Day0 跨芯适配，提供覆盖八个平台的 W8A8 版本，安装、启动与推理方法见 [FlagOS 多芯部署指南](./tutorial/FlagOS/xing4.1-preview-flagos.md)。
 
-昇腾 NPU 部署文档即将补充。
+**vLLM-Ascend（昇腾 NPU）**——部署文档即将补充。
 
-### 超参选择
+# 应用场景
 
-#### Xing4.1-Preview 模型推理参数选择
+- **智能体协同办公**——多步骤办公流程、跨工具编排、多源材料交叉核对的报表生成。
+- **深度研究**——持续性多源调研，输出结构化、可核对的交付物。
+- **智能体编程**——完整前端生成（单文件、零依赖、可离线打开的 Web 应用）、3D 创意编程与数据分析流水线。
+- **文档密集型业务**——面向业务系统的架构引导结构化抽取。
 
-| 参数 | 数值 |
-|---|---:|
-| `temperature` | 0.8 |
-| `top_p` | 1.0 |
-| `context_window` | 1M tokens |
-| `max_tokens` | 128K |
+# 免责声明
 
-## 微调
+与所有生成式语言模型一样，Xing4.1-Preview 可能产生不准确或意外的输出。输出由模型自动生成，不代表中国电信观点。请独立核实重要信息，勿将模型用于违反适用法律法规的用途。
 
-Xing4.1-Preview 保持与 Xing 4 系列一致的上游接口兼容，Xing4.0 已合入上游的微调生态可直接复用：
+# 协议与引用
 
-- [ms-swift](https://github.com/modelscope/ms-swift)：原生支持（v4.6.0+，2026-10-01 起），可直接用于微调；
-- [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory)：原生支持（main 分支，2026-10-29 起），可直接用于微调；
-- [FlagOS](https://flagos.io/)：基于 FlagOS 的多芯训练与部署适配，详见 [FlagOS 多芯部署指南](./tutorial/FlagOS/xing4.1-preview-flagos.md)。
+本仓库的权重与代码以 [Apache 2.0](./LICENSE) 协议开源。
 
-# 声明与引用
+## 相关论文
 
-### 声明
+- **Xing4 技术报告：** [TeleChat to Xing4: Advancing Frontier Agentic Models on Domestic Chips and Frameworks](https://arxiv.org/abs/2611.22115)
+- **cmHC：** [cmHC: Balancing Stream Mixing in Hyper-Connections via Geometric Contraction](https://arxiv.org/abs/2611.27193)
 
-请勿将 Xing4 及其衍生模型用于任何危害国家社会安全或违反法律法规的活动，也请勿将其用于未经安全审查与备案的互联网服务。
-
-我们已尽力确保训练数据的合规性，但受限于模型与数据的复杂性，仍可能存在无法预见的问题。对于因使用本开源模型所引发的任何问题——包括但不限于数据安全、舆论风险，以及模型被误导、滥用、传播或不当利用所带来的风险——我们不承担相关责任。
-
-### 引用
-
-如需引用我们的工作，请使用如下参考：
+## 引用
 
 ```bibtex
 @misc{lab2026telechatxing4advancingfrontier,
@@ -177,3 +166,10 @@ Xing4.1-Preview 保持与 Xing 4 系列一致的上游接口兼容，Xing4.0 已
       url={https://arxiv.org/abs/2611.22115}, 
 }
 ```
+
+---
+
+<p align="center">
+  <b>中电信人工智能科技出品</b><br>
+  <a href="https://github.com/XingChen-AGI">XingChen-AGI 开源组织</a>
+</p>

@@ -1,67 +1,80 @@
-# Xing4.1-Preview
+<div align="center">
+<h1>
+  Xing4.1-Preview
+</h1>
+</div>
 
-🦉 [GitHub](https://github.com/XingChen-AGI/Xing4.1-Preview) · 🤗 [Hugging Face](https://huggingface.co/XingChen-AGI/Xing4.1-Preview) · 🤖 [ModelScope](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview) · 🪐 [Modelers](https://modelers.cn/models/XingChen-AGI/Xing4.1-Preview) · 📖 [中文](./README_ZH.md)
+<p align="center"><b>Trained end-to-end on 8,192 Ascend 910C accelerators with MindSpore and an in-house training system.<br>Workhorse capacity at a fraction of the cost — a 285B-total / 17B-active MoE model<br>purpose-built for agentic coding and long-horizon agent workflows, with a native 1M context.</b></p>
+
+<p align="center">
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview" target="_blank">GitHub</a> · <a href="https://huggingface.co/XingChen-AGI/Xing4.1-Preview" target="_blank">Hugging Face</a> · <a href="https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview" target="_blank">ModelScope</a> · <a href="https://modelers.cn/user/XingChen-AGI" target="_blank">Modelers</a> · <a href="https://atomgit.com/XingChen-AGI" target="_blank">AtomGit</a> · <a href="https://www.teleai.com.cn/" target="_blank">Tianyi AI Platform</a> · <a href="./README_zh.md">Chinese</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview"><img alt="Parameters" src="https://img.shields.io/badge/Params-285B%20%2F%2017B%20active-7C3AED"></a>
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview"><img alt="Context" src="https://img.shields.io/badge/Context-1M%20native-orange"></a>
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue"></a>
+</p>
 
 # Table of Contents
 
 - [Introduction](#introduction)
+- [News](#news)
 - [Model](#model)
-- [Benchmarks](#benchmarks)
-- [Quick Start](#quick-start)
-  - [Local Inference](#local-inference)
-  - [Serving Inference](#serving-inference)
-    - [vLLM](#vllm)
-    - [SGLang](#sglang)
-    - [KTransformers](#ktransformers)
-    - [FlagOS](#flagos)
-    - [vLLM-Ascend](#vllm-ascend)
-  - [Hyperparameter Selection](#hyperparameter-selection)
-    - [Inference Parameter Recommendations for Xing4.1-Preview](#inference-parameter-recommendations-for-xing41-preview)
-- [Fine-tuning](#fine-tuning)
-- [Disclaimer & Citation](#disclaimer--citation)
-  - [Disclaimer](#disclaimer)
-  - [Citation](#citation)
+- [Evaluation](#evaluation)
+- [Quickstart](#quickstart)
+- [Use Cases](#use-cases)
+- [Disclaimer](#disclaimer)
+- [License & Citation](#license--citation)
 
 # Introduction
 
-**Xing 4** is developed by China Telecom Artificial Intelligence Technology Co., Ltd. It is the latest generation of the Xingchen semantic large model family (formerly TeleChat), trained entirely on the domestic Ascend NPU platform, and designed for long-context reasoning, code generation, and agentic applications.
+**Xing4.1-Preview** is the newest large language model in the [Xing series](https://huggingface.co/XingChen-AGI) (formerly [TeleChat](https://github.com/Tele-AI/TeleChat3)), developed by China Telecom AI Technology Co., Ltd.
 
-**Xing4.1-Preview** is a model in the Xing 4 family. It uses a sparse Mixture-of-Experts (MoE) architecture that combines Multi-head Latent Attention (MLA) and DeepSeek Sparse Attention (DSA) for long-context interaction, complex reasoning, and agent workflows.
+- **AI compute and framework for pre-training** — pre-trained on 8,192 **Ascend 910C** accelerators with the open-source **MindSpore** framework and an in-house training system; the architecture was co-designed around the accelerator's matrix-heavy compute profile from the ground up, not ported onto it.
+- **Agentic coding and long-horizon agent tasks** — purpose-built for work that requires sustained progress, multi-step reasoning, and many turns of interaction: planning across long contexts, tool calling, and structured output.
+- **285B total / 17B active (MoE)** — frontier-class capability at roughly 17B-class serving cost.
+- **Native 1M context** — served in full by the public API (up to 896K input / 128K output per request).
+- **Deep thinking, structured output, and function calling** — a toggleable thinking mode (no effort tiers), schema-guided structured output, and function calling through an OpenAI-compatible interface.
 
-- **Agent-oriented architecture:** A 45-layer MoE backbone activates 8 routed experts per token.
-- **MLA + DSA:** Combines compressed key-value representations with sparse attention over long contexts.
-- **Long context:** Supports a configured context length of **1M**.
+This is a **preview release**: open weights and the API are available now. Benchmark results are in [Evaluation](#evaluation), and the technical report is published as [arXiv 2611.22115](https://arxiv.org/abs/2611.22115).
+
+# News
+
+- 2026-11-23 Open-sourced **Xing4.1-Preview** [[HuggingFace](https://huggingface.co/XingChen-AGI/Xing4.1-Preview) | [ModelScope](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview) | [Tianyi AI Platform](https://www.teleai.com.cn/)]
 
 # Model
 
-| Configuration | Xing4.1-Preview |
-|---|---:|
-| Total parameters | **285B** |
-| Activated parameters per token | Approximately 17B |
-| Transformer layers | **45** |
-| Hidden size | 4096 |
-| Attention heads | 128 |
-| Dense FFN intermediate size | **18432** |
-| Expert intermediate size | 2048 |
-| Routed experts | 256 |
-| Active routed experts per token | 8 |
-| Shared experts | 1 |
-| Dense / MoE FFN layers | 3 / 42 |
-| Attention | MLA + DSA |
-| qk head dimension | 192 (NoPE 128 + RoPE 64) |
-| v head dimension | 128 |
-| MLA q LoRA rank / kv LoRA rank | 1536 / 512 |
-| DSA index heads / head dimension / top-k | 64 / 128 / 2048 |
-| Normalization / activation | RMSNorm (eps 1e-5) / SiLU |
-| Tokenizer / vocabulary size | BPE / 131072 |
-| Maximum context length | **1M** |
-| RoPE / YaRN | θ=100000 / factor=32 (original context length 32768) |
+The architecture of **Xing4.1-Preview**:
 
-The model uses a **45-layer Transformer** backbone. The first **3** layers use Dense FFNs, followed by **42** MoE FFN layers. The attention architecture combines MLA and DSA.
+| | Attention Type | Attention Sparsity | Routed Experts | Active Experts per Token | Shared Experts | Total / Active Params | Context Length |
+|---|---|---|---|---|---|---|---|
+| Xing4.1-Preview | MLA | DSA | 256 | Top-8 | 1 | 285B / 17B | 1M native |
 
-# Benchmarks
+Key design choices:
 
-Xing4.1-Preview is compared with Flash-class models of the same scale on agent and reasoning benchmarks:
+- **DSA (Dynamic Sparse Attention)** reduces long-context attention cost and memory traffic while keeping matrix multiplication — what the training accelerators do best — at the center of the computation graph.
+- **A wider, shallower network** raises the arithmetic intensity and data-reuse efficiency of core matmul operators while cutting per-layer serial overhead.
+- **MLA + DSA** jointly shrink the KV cache and the traffic that reads it, relieving the memory-bandwidth bottleneck for long sequences.
+- **Co-designed training infrastructure** — sharded-data-parallel communication optimization, a distributed Muon optimizer with cross-replica deduplication, DSA long-sequence system optimizations, and fine-grained selective recomputation — lifts end-to-end training throughput by **~15–30%**, with the largest gains on long sequences.
+
+## Compute and framework for training
+
+Pre-training ran on **8,192 Ascend 910C accelerators** with **MindSpore** and an in-house training system (the HyperParallel line of work). Accelerators, framework, and training system were developed and optimized as one stack:
+
+- **HSDP instead of cluster-wide FSDP** — parameters are fully sharded inside each super-pod and replicated across super-pods, so all-gather and reduce-scatter stay within the high-bandwidth interconnect domain and only coarse-grained gradient all-reduce crosses pod boundaries. This removes the need for pipeline parallelism, and the pipeline bubbles that come with it.
+- **Owner-based Muon** — Newton–Schulz orthogonalization is computed once per matrix by a designated owner shard-group and then scattered back, instead of being redundantly recomputed on every node.
+- **Fine-grained selective recomputation** — what to retain is decided per operator, from its execution cost and output footprint, rather than per layer.
+- **Host-side scheduling** — training threads are pinned to dedicated CPU cores, with system services and interrupt handling moved out of the training CPU pool.
+- **Net result** — roughly **15–30%** higher end-to-end training throughput, with the largest gains on long sequences.
+
+Post-training used an in-house agent platform (TeleGym) that unifies task execution, evaluation, trajectory construction, and reinforcement learning, with async execution, bounded oversampling, and partial rollout so that in-flight agent tasks survive policy updates. Details are in the [technical report](https://arxiv.org/abs/2611.22115).
+
+**A note on the format of the released weights.** The native format of the Xing4.1-Preview weights is MindSpore. Since most inference and fine-tuning toolchains in the open-source ecosystem are PyTorch-centric, we fully converted the weights to the **PyTorch (Hugging Face Transformers) format** before release, sharded as **safetensors**. The community can load them directly with common frameworks such as Transformers, SGLang, and vLLM, without having to deal with the framework used for training.
+
+# Evaluation
+
+Xing4.1-Preview is evaluated on agentic and reasoning benchmarks against same-class flash models:
 
 | Benchmark | Xing4.1-Preview | Hy4-flash | GLM-5.3-Flash | Deepseek-v4-flash-0731 |
 |---|---:|---:|---:|---:|
@@ -73,15 +86,15 @@ Xing4.1-Preview is compared with Flash-class models of the same scale on agent a
 
 Notes:
 
-1. Except for Xing4.1-Preview, the metrics of all other models are taken from their public reports.
-2. † Terminal-Bench 4.0: Xing4.1-Preview skipped all GPU-sandbox tasks.
-3. ‡ HLE: Xing4.1-Preview was evaluated on text-only data.
+1. For all models other than Xing4.1-Preview, each score is taken from that model's public report.
+2. † Terminal-Bench 4.0: GPU sandbox tasks were skipped for Xing4.1-Preview.
+3. ‡ HLE: Xing4.1-Preview was evaluated on text-only data only.
 
-# Quick Start
+The comparison set covers agentic execution, tool use, and general reasoning, and results vary by task — we recommend judging fitness on the workloads that match your use case rather than on a single aggregate.
 
-### Local Inference
+# Quickstart
 
-Xing4.1-Preview is available through the [TeleAI Open Platform](https://www.teleai.com.cn/) via an OpenAI-compatible API for a quick try:
+Xing4.1-Preview is available through an OpenAI-compatible API on the [Tianyi AI open platform](https://www.teleai.com.cn/).
 
 ```python
 from openai import OpenAI
@@ -94,78 +107,53 @@ client = OpenAI(
 response = client.chat.completions.create(
     model="Xing4.1-Preview",
     messages=[
-        {"role": "user", "content": "用单个 HTML 文件做一个团建费用估算页，勾选活动与人数后实时更新明细、总额与人均。"}
+        {"role": "user", "content": "Write a single-file HTML page for a team-building cost estimator with live totals."}
     ],
 )
 
 print(response.choices[0].message.content)
 ```
 
-- The public API provides the full **1M** context (up to **896K** input / **128K** output per request).
-- Thinking mode on/off, structured output, and function calling are supported.
+- **Context window**: the public API serves the full **1M** context (up to **896K** input / **128K** output per request).
+- **Thinking mode**: supported as an on/off toggle (no effort tiers).
+- **Structured output & function calling**: supported through the OpenAI-compatible interface.
 
-For private deployment, refer to the vLLM / SGLang deployment documents under "Serving Inference" below.
+**Recommended parameters:** `temperature=0.8`, `top_p=1.0`, `max_tokens=128K`.
 
-### Serving Inference
-
-> [!NOTE]
-> Xing4.1-Preview uses a different architecture from Xing4.0 but maintains upstream interface compatibility. vLLM provides `xing4_0` reasoning / tool-call parsing through an official plugin; SGLang supports it natively on the main branch. For Ascend NPU and multi-chip W8A8 deployment, refer to the corresponding documents.
-
-#### vLLM
-
-[vLLM](https://github.com/vllm-project/vllm) is a high-throughput, low-latency LLM inference and serving engine that can launch an OpenAI-compatible API service with a single command. The model body of Xing4.1-Preview (`deepseek_v32`) is loaded natively by vLLM, while the `xing4_0` reasoning and tool-call parsing is provided by the official plugin [xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin).
-
-For detailed deployment steps, parameter descriptions, and call examples, refer to the [Xing4.1-Preview vLLM deployment document](./tutorial/vLLM/xing4.1-preview-vllm_en.md).
-
-#### SGLang
-
-[SGLang](https://github.com/sgl-project/sglang) is a high-performance serving framework for large language models. Its main branch natively supports Xing4.1-Preview, so no additional plugin installation is required.
-
-For detailed deployment steps, parameter descriptions, and call examples, refer to the [Xing4.1-Preview SGLang deployment document](./tutorial/SGLang/xing4.1-preview-sglang_en.md).
-
-#### KTransformers
+## Self-hosting
 
 > [!NOTE]
-> KTransformers (and llama.cpp) currently only apply to the Xing4.0 family and **do not support Xing4.1-Preview**.
+> Xing4.1-Preview uses the Xing 4 family's serving stack. Replace `${MODEL_PATH}` with a local path or the hub id `XingChen-AGI/Xing4.1-Preview`. As a 285B BF16 MoE (~521 GiB), the weights alone need roughly **8×80 GB** GPUs at `--tensor-parallel-size 8`, and longer contexts need proportionally more. The native context is 1M — set the context flags (`--max-model-len` / `--context-length`) to what your hardware can hold. Parser identifiers and prebuilt image tags follow the official deployment guides in this repository ([vLLM](./tutorial/vLLM/xing4.1-preview-vllm_en.md) / [SGLang](./tutorial/SGLang/xing4.1-preview-sglang_en.md) / [FlagOS](./tutorial/FlagOS/xing4.1-preview-flagos.md)).
 
-#### FlagOS
+**vLLM** — official out-of-tree plugin ([XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin)). The model itself (`deepseek_v32`) is loaded natively by vLLM, while `xing4_0` reasoning / tool-call parsing is provided by the plugin; see the [vLLM deployment guide](./tutorial/vLLM/xing4.1-preview-vllm_en.md) for detailed steps, parameter descriptions, and call examples.
 
-The [FlagOS](https://flagos.io/) community completed Day0 cross-chip adaptation for Xing4.1-Preview, providing a W8A8 version covering eight platforms. For deployment details, refer to the [FlagOS multi-chip deployment guide](./tutorial/FlagOS/xing4.1-preview-flagos.md).
+**SGLang** — natively supported in the main branch with no extra plugin; see the [SGLang deployment guide](./tutorial/SGLang/xing4.1-preview-sglang_en.md) for detailed steps, parameter descriptions, and call examples.
 
-#### vLLM-Ascend
+**FlagOS** — the community completed Day0 cross-chip adaptation for Xing4.1-Preview and provides a W8A8 build covering eight platforms; see the [FlagOS multi-chip deployment guide](./tutorial/FlagOS/xing4.1-preview-flagos.md) for installation, startup, and inference.
 
-Ascend NPU deployment documentation will be added soon.
+**vLLM-Ascend (Ascend NPU)** — deployment documentation will be added soon.
 
-### Hyperparameter Selection
+# Use Cases
 
-#### Inference Parameter Recommendations for Xing4.1-Preview
+- **Agentic collaborative work** — multi-step office workflows, cross-tool orchestration, and report generation that reconciles multiple conflicting sources.
+- **Deep research** — sustained, multi-source investigation with structured, auditable deliverables.
+- **Agentic coding** — complete frontend generation (single-file, zero-dependency, offline-runnable web apps), 3D and creative coding, and data-analysis pipelines.
+- **Document-heavy back-office** — schema-guided structured extraction for business systems.
 
-| Parameter | Value |
-|---|---:|
-| `temperature` | 0.8 |
-| `top_p` | 1.0 |
-| `context_window` | 1M tokens |
-| `max_tokens` | 128K |
+# Disclaimer
 
-## Fine-tuning
+Like all generative language models, Xing4.1-Preview can produce inaccurate or unexpected outputs. Outputs are generated automatically and do not represent the views of China Telecom. Verify important information independently. Do not use the model for any purpose that violates applicable laws and regulations.
 
-Xing4.1-Preview maintains the same upstream interface compatibility as the Xing 4 family, so the fine-tuning ecosystem already merged upstream for Xing4.0 can be reused directly:
+# License & Citation
 
-- [ms-swift](https://github.com/modelscope/ms-swift): natively supported (v4.6.0+, since 2026-10-01), can be used directly for fine-tuning.
-- [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory): natively supported (main branch, since 2026-10-29), can be used directly for fine-tuning.
-- [FlagOS](https://flagos.io/): multi-chip training and deployment adaptation based on FlagOS; see the [FlagOS multi-chip deployment guide](./tutorial/FlagOS/xing4.1-preview-flagos.md) for details.
+Weights and code in this repository are released under the [Apache 2.0 License](./LICENSE).
 
-# Disclaimer & Citation
+## Related papers
 
-### Disclaimer
+- **Xing4 Technical Report:** [TeleChat to Xing4: Advancing Frontier Agentic Models on Domestic Chips and Frameworks](https://arxiv.org/abs/2611.22115)
+- **cmHC:** [cmHC: Balancing Stream Mixing in Hyper-Connections via Geometric Contraction](https://arxiv.org/abs/2611.27193)
 
-Do not use Xing4 or its derivative models for any activities that endanger national or social security, or violate applicable laws and regulations. Do not use it for internet services that have not undergone security review and filing.
-
-We have made every effort to ensure the compliance of the training data, but due to the complexity of models and data, unforeseen issues may still arise. We assume no liability for any issues arising from the use of this open-source model — including but not limited to data security risks, public opinion risks, and risks arising from the model being misled, misused, disseminated, or improperly utilized.
-
-### Citation
-
-If you find our work useful, please cite:
+## Citation
 
 ```bibtex
 @misc{lab2026telechatxing4advancingfrontier,
@@ -178,3 +166,10 @@ If you find our work useful, please cite:
       url={https://arxiv.org/abs/2611.22115}, 
 }
 ```
+
+---
+
+<p align="center">
+  <b>Built by China Telecom AI Technology Co., Ltd.</b><br>
+  <a href="https://github.com/XingChen-AGI">XingChen-AGI Open-Source Organization</a>
+</p>
