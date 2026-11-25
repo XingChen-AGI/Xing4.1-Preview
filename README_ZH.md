@@ -169,6 +169,7 @@ Xing4.1-Preview 与 **Xing4.0 架构不同**（采用 MLA + DSA 设计），但�
 | [SGLang](https://github.com/sgl-project/sglang) | 原生 —— **main 分支** | 2026-11-05 | 使用已合入的 SGLang main 分支 |
 | [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) | 原生 —— **main 分支** | 2026-10-29 | 使用已合入的 LLaMA-Factory main 分支 |
 | [vLLM](https://github.com/vllm-project/vllm) | 官方 out-of-tree 插件 | — | [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin) |
+| [vLLM-Ascend](https://github.com/vllm-project/vllm-ascend) | 昇腾 NPU | — | [vLLM-Ascend 部署文档](./tutorial/vLLM-Ascend/README.md) |
 | [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) | 上游评审中的 PR | — | 见 GitHub README 中的 PR 分支 |
 
 ## 本地部署
@@ -182,7 +183,7 @@ Xing4.1-Preview 与 **Xing4.0 架构不同**（采用 MLA + DSA 设计），但�
 
 **FlagOS**——社区已完成 Xing4.1-Preview 的 Day0 跨芯适配，提供覆盖八个平台的 W8A8 版本，安装、启动与推理方法见 [FlagOS 多芯部署指南](./tutorial/FlagOS/xing4.1-preview-flagos.md)。
 
-**vLLM-Ascend（昇腾 NPU）**——部署文档即将补充。
+**vLLM-Ascend（昇腾 NPU）**——通过 vLLM-Ascend 在昇腾 NPU 上部署；详细部署步骤、参数说明与调用示例见 [vLLM-Ascend 部署文档](./tutorial/vLLM-Ascend/README.md)。
 
 # 推荐参数
 

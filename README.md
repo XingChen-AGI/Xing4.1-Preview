@@ -169,6 +169,7 @@ Xing4.1-Preview has a **different architecture from Xing4.0** (using MLA + DSA),
 | [SGLang](https://github.com/sgl-project/sglang) | Native — **main branch** | 2026-11-05 | Use the upstream SGLang main branch |
 | [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) | Native — **main branch** | 2026-10-29 | Use the upstream LLaMA-Factory main branch |
 | [vLLM](https://github.com/vllm-project/vllm) | Official out-of-tree plugin | — | [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin) |
+| [vLLM-Ascend](https://github.com/vllm-project/vllm-ascend) | Ascend NPU | — | [vLLM-Ascend deployment guide](./tutorial/vLLM-Ascend/README.md) |
 | [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) | Upstream PR under review | — | See the PR branch in the GitHub README |
 
 ## Local Deployment
@@ -182,7 +183,7 @@ Xing4.1-Preview has a **different architecture from Xing4.0** (using MLA + DSA),
 
 **FlagOS** — the community completed Day0 cross-chip adaptation for Xing4.1-Preview, providing W8A8 builds covering eight platforms; for installation, startup, and inference, see the [FlagOS multi-chip deployment guide](./tutorial/FlagOS/xing4.1-preview-flagos.md).
 
-**vLLM-Ascend (Ascend NPU)** — deployment documentation coming soon.
+**vLLM-Ascend (Ascend NPU)** — Ascend NPU deployment via vLLM-Ascend; for detailed deployment steps, parameter descriptions, and call examples, see the [vLLM-Ascend deployment guide](./tutorial/vLLM-Ascend/README.md).
 
 # Recommended Parameters
 
