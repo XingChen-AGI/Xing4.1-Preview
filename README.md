@@ -4,10 +4,15 @@
 </h1>
 </div>
 
-<p align="center"><b>Trained end-to-end on 8,192 Ascend 910C accelerators with MindSpore and an in-house training system.<br>Workhorse capacity at a fraction of the cost — a 285B-total / 17B-active MoE model<br>purpose-built for agentic coding and long-horizon agent workflows, with a native 1M context.</b></p>
+<p align="center"><strong>—— Advancing Frontier Agentic Models On Domestic Chips And Frameworks</strong></p>
 
 <p align="center">
-  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview" target="_blank">GitHub</a> · <a href="https://huggingface.co/XingChen-AGI/Xing4.1-Preview" target="_blank">Hugging Face</a> · <a href="https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview" target="_blank">ModelScope</a> · <a href="https://modelers.cn/user/XingChen-AGI" target="_blank">Modelers</a> · <a href="https://atomgit.com/XingChen-AGI" target="_blank">AtomGit</a> · <a href="https://www.teleai.com.cn/" target="_blank">Tianyi AI Platform</a> · <a href="./README_zh.md">Chinese</a>
+  <b>8,192 Ascend 910C chips + MindSpore training framework<br>
+  285B total / 17B active MoE model, built for agentic coding and long-horizon complex agent tasks, with native 1M context.</b>
+</p>
+
+<p align="center">
+  <a href="https://github.com/XingChen-AGI/Xing4.1-Preview" target="_blank">GitHub</a> · <a href="https://huggingface.co/XingChen-AGI/Xing4.1-Preview" target="_blank">HF (Transformers)</a> · <a href="https://huggingface.co/XingChen-AGI/Xing4.1-Preview-MindSpore" target="_blank">HF (MindSpore)</a> · <a href="https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview" target="_blank">ModelScope</a> · <a href="https://modelers.cn/user/XingChen-AGI" target="_blank">Modelers</a> · <a href="https://atomgit.com/XingChen-AGI" target="_blank">AtomGit</a> · <a href="https://www.teleai.com.cn/" target="_blank">TeleAI Open Platform</a> · <a href="https://huggingface.co/papers/2611.22115" target="_blank">Technical Report</a>
 </p>
 
 <p align="center">
@@ -16,85 +21,121 @@
   <a href="https://github.com/XingChen-AGI/Xing4.1-Preview/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue"></a>
 </p>
 
+<p align="right">English | <a href="./README_ZH.md">中文</a></p>
+
 # Table of Contents
 
 - [Introduction](#introduction)
-- [News](#news)
-- [Model](#model)
-- [Evaluation](#evaluation)
-- [Quickstart](#quickstart)
+- [Latest Updates](#latest-updates)
+- [Hardware-Software Co-design for Ascend 910C](#hardware-software-co-design-for-ascend-910c)
+- [Compute and Training Framework](#compute-and-training-framework)
+- [Model Training](#model-training)
+- [Evaluation Results](#evaluation-results)
+- [Quick Start](#quick-start)
+- [Recommended Parameters](#recommended-parameters)
 - [Use Cases](#use-cases)
 - [Disclaimer](#disclaimer)
 - [License & Citation](#license--citation)
 
 # Introduction
 
-**Xing4.1-Preview** is the newest large language model in the [Xing series](https://huggingface.co/XingChen-AGI) (formerly [TeleChat](https://github.com/Tele-AI/TeleChat3)), developed by China Telecom AI Technology Co., Ltd.
+Xing4.1-Preview is developed by China Telecom Artificial Intelligence Technology (Beijing) Co., Ltd. It is the latest model in the Xing series (formerly TeleChat), adopting a Sparse Mixture-of-Experts (MoE) architecture that combines Multi-head Latent Attention (MLA) with DeepSeek Sparse Attention (DSA), targeting long-context interaction, complex reasoning, and agent workflows:
 
-- **AI compute and framework for pre-training** — pre-trained on 8,192 **Ascend 910C** accelerators with the open-source **MindSpore** framework and an in-house training system; the architecture was co-designed around the accelerator's matrix-heavy compute profile from the ground up, not ported onto it.
-- **Agentic coding and long-horizon agent tasks** — purpose-built for work that requires sustained progress, multi-step reasoning, and many turns of interaction: planning across long contexts, tool calling, and structured output.
-- **285B total / 17B active (MoE)** — frontier-class capability at roughly 17B-class serving cost.
-- **Native 1M context** — served in full by the public API (up to 896K input / 128K output per request).
-- **Deep thinking, structured output, and function calling** — a toggleable thinking mode (no effort tiers), schema-guided structured output, and function calling through an OpenAI-compatible interface.
+- **Compute and training framework:** 8,192 Ascend 910C chips + MindSpore training framework, jointly supporting model training.
+- **Hardware-aware architecture co-design:** The architecture is co-designed to leverage the strengths and address the constraints of Ascend 910C AI accelerators, rather than simply porting an existing model onto the hardware.
+- **Strong agentic and coding capabilities:** Demonstrates competitive performance on agentic workloads, including data analysis, frontend generation, and long-document comprehension. The model has also been evaluated with multiple mainstream agent harnesses, including Codex, OpenCode, Pi, Claude Code, and WorkBuddy.
+- **MLA + DSA attention with native 1M context:** Combines compressed Key-Value representations with long-context sparse attention, natively supporting a **1M** context length.
 
-This is a **preview release**: open weights and the API are available now. Benchmark results are in [Evaluation](#evaluation), and the technical report is published as [arXiv 2611.22115](https://arxiv.org/abs/2611.22115).
+# Latest Updates
 
-# News
+- 2026-11-23 Open-sourced **Xing4.1-Preview** [[HuggingFace](https://huggingface.co/XingChen-AGI/Xing4.1-Preview) | [HuggingFace (MindSpore)](https://huggingface.co/XingChen-AGI/Xing4.1-Preview-MindSpore) | [ModelScope](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview) | [ModelScope (MindSpore)](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview-MindSpore/)| [TeleAI Open Platform](https://www.teleai.com.cn/)]
 
-- 2026-11-23 Open-sourced **Xing4.1-Preview** [[HuggingFace](https://huggingface.co/XingChen-AGI/Xing4.1-Preview) | [ModelScope](https://modelscope.cn/models/XingChen-AGI/Xing4.1-Preview) | [Tianyi AI Platform](https://www.teleai.com.cn/)]
+# Hardware-Software Co-design for Ascend 910C
 
-# Model
+**Leveraging the Ascend 910C chip's high matrix (Cube) compute ratio and constrained vector compute, together with the super-pod cluster's unified memory addressing and high inter-card communication bandwidth, Xing4.1-Preview uses the MindSpore training framework as its foundation. Targeted designs have been applied across model architecture, parallelism strategy, and token vocabulary to jointly improve model capability, training efficiency, and cluster utilization. The model also adopts MLA and DSA from DeepSeek V3.2 to improve inference efficiency, and is compatible with open-source ecosystems such as SGLang and vLLM.**
 
-The architecture of **Xing4.1-Preview**:
+## Sparse Attention Architecture Selection: Reducing the Vector Compute Bottleneck
 
-| | Attention Type | Attention Sparsity | Routed Experts | Active Experts per Token | Shared Experts | Total / Active Params | Context Length |
-|---|---|---|---|---|---|---|---|
-| Xing4.1-Preview | MLA | DSA | 256 | Top-8 | 1 | 285B / 17B | 1M native |
+Compared with hybrid linear attention architectures such as KDA and GDN, **DSA relies primarily on matrix-multiplication operations, which are better aligned with the Cube compute units**. While hybrid linear attention offers theoretical complexity advantages for long sequences, its gating, state update, and scan operations place high demands on Vector performance and operator fusion capabilities, making it difficult to fully realize theoretical gains under the current 910C software stack. We therefore prioritize DSA, which reduces attention computation complexity while better leveraging the hardware's matrix compute strengths.
 
-Key design choices:
+## Wide-and-Shallow Architecture: Improving Cube Utilization
 
-- **DSA (Dynamic Sparse Attention)** reduces long-context attention cost and memory traffic while keeping matrix multiplication — what the training accelerators do best — at the center of the computation graph.
-- **A wider, shallower network** raises the arithmetic intensity and data-reuse efficiency of core matmul operators while cutting per-layer serial overhead.
-- **MLA + DSA** jointly shrink the KV cache and the traffic that reads it, relieving the memory-bandwidth bottleneck for long sequences.
-- **Co-designed training infrastructure** — sharded-data-parallel communication optimization, a distributed Muon optimizer with cross-replica deduplication, DSA long-sequence system optimizations, and fine-grained selective recomputation — lifts end-to-end training throughput by **~15–30%**, with the largest gains on long sequences.
+Under the constraints of model scale and parallelism strategy, we adopt a design that **moderately increases network width while reducing depth** (45 layers / Hidden Size 4096 / Dense FFN Intermediate 18432). This increases the computation scale, arithmetic intensity, and data reuse efficiency of core matrix multiplication operators, thereby improving Cube unit utilization. At the same time, reducing the number of layers lowers per-layer sequential overheads such as normalization, activation functions, operator scheduling, and data movement, mitigating the impact of Vector performance bottlenecks on overall training throughput.
 
-## Compute and framework for training
+## Parallelism Strategy Optimization: Improving Cluster Utilization
 
-Pre-training ran on **8,192 Ascend 910C accelerators** with **MindSpore** and an in-house training system (the HyperParallel line of work). Accelerators, framework, and training system were developed and optimized as one stack:
+We adopt a hybrid sharding strategy — "shard within super-pods, replicate across super-pods" — to reduce per-device memory footprint, replacing pipeline parallelism to eliminate bubble overhead. Communication is performed directly on parameter tensors, avoiding redundant copy-in/copy-out through intermediate buffers. Intra-super-pod AllGather and ReduceScatter for parameters and gradients, together with inter-super-pod fused gradient AllReduce, are overlapped asynchronously with backward computation, enabling overlapping of communication across three levels.
 
-- **HSDP instead of cluster-wide FSDP** — parameters are fully sharded inside each super-pod and replicated across super-pods, so all-gather and reduce-scatter stay within the high-bandwidth interconnect domain and only coarse-grained gradient all-reduce crosses pod boundaries. This removes the need for pipeline parallelism, and the pipeline bubbles that come with it.
-- **Owner-based Muon** — Newton–Schulz orthogonalization is computed once per matrix by a designated owner shard-group and then scattered back, instead of being redundantly recomputed on every node.
-- **Fine-grained selective recomputation** — what to retain is decided per operator, from its execution cost and output footprint, rather than per layer.
-- **Host-side scheduling** — training threads are pinned to dedicated CPU cores, with system services and interrupt handling moved out of the training CPU pool.
-- **Net result** — roughly **15–30%** higher end-to-end training throughput, with the largest gains on long sequences.
+## Optimized Token Vocabulary: Improving Token Compression Ratio
 
-Post-training used an in-house agent platform (TeleGym) that unifies task execution, evaluation, trajectory construction, and reinforcement learning, with async execution, bounded oversampling, and partial rollout so that in-flight agent tasks survive policy updates. Details are in the [technical report](https://arxiv.org/abs/2611.22115).
+The vocabulary was customized for agent and coding scenarios. Subword statistics, frequency counts, and pointwise mutual information were computed over large-scale corpora from target domains — including agent trajectories, tool calls, and code repositories — and high-frequency contiguous spans were preferentially merged. With the vocabulary size held constant, the customized vocabulary reduces token counts by 16% for agent scenarios and 23% for coding scenarios, substantially boosting problem-solving capability in these domains.
 
-**A note on the format of the released weights.** The native format of the Xing4.1-Preview weights is MindSpore. Since most inference and fine-tuning toolchains in the open-source ecosystem are PyTorch-centric, we fully converted the weights to the **PyTorch (Hugging Face Transformers) format** before release, sharded as **safetensors**. The community can load them directly with common frameworks such as Transformers, SGLang, and vLLM, without having to deal with the framework used for training.
+# Compute and Training Framework
 
-# Evaluation
+Xing4.1-Preview training uses 8,192 Ascend 910C chips and the MindSpore training framework. Key contributions include:
 
-Xing4.1-Preview is evaluated on agentic and reasoning benchmarks against same-class flash models:
+- Owner-based Muon optimizer: Keeps parameter and momentum sharding layout unchanged. The Newton–Schulz orthogonalization of each 2D matrix is performed once by a designated Owner device within the sharding group and then broadcast (batched by matrix shape), avoiding redundant full-matrix reconstruction and duplicate computation across devices.
 
-| Benchmark | Xing4.1-Preview | Hy4-flash | GLM-5.3-Flash | Deepseek-v4-flash-0731 |
-|---|---:|---:|---:|---:|
-| Terminal-Bench 4.0 | **20.6**† | 19.2 | 35.4 | 7.0 |
-| AutomationBench v1.0.6 | **45.3** | 52.2 | 48.4 | 37.7 |
-| Apex-Agents v1.1 | **50.7** | 63.1 | 51.5 | 55.3 |
-| HLE w/ tools | **45.7**‡ | 55.2 | 52.2 | 51.5 |
-| Claw-Eval (pass^3) | **49.7** | — | — | 49.3 |
+- Fine-grained selective recomputation: Operators are precisely selected for retention based on execution time and output memory footprint, avoiding coarse whole-layer recomputation and per-operator framework callback overhead. Boundary input placeholder release and recomputation recovery mechanisms further compress activation memory.
+
+- Long-sequence sparse attention optimization: Supports layer-wise early backward propagation of Indexers to release auxiliary computation graphs as soon as possible, combined with dynamic sequence block pairing and document-level KV window pruning, reducing computation imbalance and memory access redundancy under ultra-long contexts.
+
+- Host-side scheduling: Training threads are assigned CPU affinity by device pool or thread role subset (while preserving intra-pool load balancing), and selected system services and migratable interrupts are isolated to a dedicated system core pool, reducing large-scale cluster synchronization stalls.
+
+Post-training uses the in-house TeleGym platform. TeleGym provides an integrated infrastructure for agentic post-training, covering task execution, evaluation, trajectory construction, and policy optimization. Its asynchronous execution, bounded oversampling, and partial rollout mechanisms enable efficient utilization of agent execution resources while maintaining trajectory continuity across policy updates.
+
+# Model Training
+
+**Xing4.1-Preview** supports model training via the MindSpore framework and the MindSpore Transformers (MindFormers) toolkit, covering pre-training, fine-tuning, evaluation, inference, and deployment. It provides implementations and configurations for supported Transformer models, with streamlined single-device and distributed training workflows. For the specific feature support scope of each model, please refer to the official model library.
+
+For environment setup, task launching, and distributed parallelism strategies, or to learn more about framework features and source code, please refer to the [MindSpore Transformers (MindFormers) official repository](https://gitcode.com/mindspore/mindformers). For Xing4.1-Preview training, see the [MindSpore MindFormers — Xing4 Training Guide](https://gitcode.com/mindspore/mindformers/blob/master/configs/xing4/README.md).
+
+# Evaluation Results
+
+| Benchmark | Xing4.1-Preview | DeepSeek-V4-Flash-0731 | GLM-5.3-Flash | DeepSeek-V4.1-Flash-1017 | GLM-5.3 |
+| --- | --- | --- | --- | --- | --- |
+| **Reasoning & Knowledge** |  |  |  |  |  |
+| MMLU-Pro | 85.2 | 85.18 | 87.58 | 87.83 | 88 |
+| GPQA Diamond | 89.34 | 90.7 | 88.8 | 93.91 | 91.88 |
+| AIME 2026 | 92 | 98.5 | 88 | 100 | 89.3 |
+| **Coding** |  |  |  |  |  |
+| SWE-Bench Pro V2 (Hard51) | 74.5 | 60.8 | 72.7 | 88.2 | 84.3 |
+| Terminal-Bench 2.1 | 80.8 | 82.7 † | 84.3 † | 87.6 § | 88.2 † |
+| Terminal-Bench 4.0 | 28.7 | 12.1 ‡ | 32.8 ‡ | 33.8 ‡ | 41.9 ‡ |
+| Terminal-Bench-Science 0.1 | 12.9 | 4.3 § | 4.8 ‡ | 12.9 | 9.5 ‡ |
+| SciCode | 53.95 | 50 | 52 | 59 | 56 |
+| SWE-Atlas v1.0-QA | 51.2 | 48 | 56 | 61 | 58.5 |
+| SWE-Atlas v1.0-RF | 41.4 | 47.14 | 40 | 44.3 | 45.7 |
+| **Agent** |  |  |  |  |  |
+| HLE-diamond (w/ tools, text-only) | 52.3 | 53.5 | 47.3 | 70 | 48.7 |
+| AutomationBench v1.0.6 | 52.3 | 38.8 † | 48.8 † | 60.5 † | 53.33 † |
+| Agent's Last Exam | 20.2 | 25.2 † | 26.3 † | 35.4 † | 28.5 † |
+| WorkspaceBench (text-only) | 56.5 | 56.3 | 57.3 | 64 | 57.1 |
+| Claw-Eval (text-only) | 80.58 | 79.49 | 79.24 | — | 80.3 |
+| Tau3-Banking | 41.5 | 39.4 ‡ | 47.2 ‡ | — | 50.3 ‡ |
+| **Long-Document Reasoning** |  |  |  |  |  |
+| GDP.pdf | 13.2 | 11 ‡ | 15.4 ‡ | 17.2 ‡ | 11.2 ‡ |
+| AA.LCR | 79.67 | 79.7 ‡ | 80 ‡ | 82.7 ‡ | 79.7 ‡ |
 
 Notes:
 
-1. For all models other than Xing4.1-Preview, each score is taken from that model's public report.
-2. † Terminal-Bench 4.0: GPU sandbox tasks were skipped for Xing4.1-Preview.
-3. ‡ HLE: Xing4.1-Preview was evaluated on text-only data only.
+1. **Data sources:** Unmarked scores are self-evaluated; † from the model's official technical report; ‡ from the Artificial Analysis leaderboard; § from third-party evaluation reports.
+2. **Xing4.1-Preview evaluation parameters:** Default `temperature=0.8, top_p=0.95, repetition_penalty=1.05`, with the following exceptions: MMLU-Pro `temperature=0.6`; GPQA Diamond / AIME 2026 `temperature=1.0`; Agent's Last Exam `temperature=1.0, repetition_penalty=1.0`. Comparison models use their respective recommended parameters with reasoning effort set to maximum.
+3. **Evaluation frameworks and settings:**
+    - HLE-diamond (w/ tools, text-only): OpenCode;
+    - Terminal-Bench 2.1: Xing4.1-Preview uses the terminus-2 harness; comparison models use the Claude Code harness;
+    - Terminal-Bench 4.0: mini-swe-agent;
+    - Terminal-Bench-Science 0.1: mini-swe-agent;
+    - SWE-Atlas v1.0 series (QA / RF): mini-swe-agent;
+    - Agent's Last Exam: OpenCode v1.19.5 / ALE v1.0 CLI mode;
+    - WorkspaceBench: Claude Code, Judge Model uses Claude-Opus-5.5, timeout 3600s, text-only models use an injected hook restricting input to text only;
+    - SciCode: official evaluation code and configuration;
+    - Claw-Eval: official evaluation code and configuration, no timeout limit;
+    - AutomationBench: v1.0.6, including the [PR #13](https://github.com/zapier/AutomationBench/pull/13) fix.
 
-The comparison set covers agentic execution, tool use, and general reasoning, and results vary by task — we recommend judging fitness on the workloads that match your use case rather than on a single aggregate.
+# Quick Start
 
-# Quickstart
-
-Xing4.1-Preview is available through an OpenAI-compatible API on the [Tianyi AI open platform](https://www.teleai.com.cn/).
+Xing4.1-Preview is available via an OpenAI-compatible API through the [TeleAI Open Platform](https://www.teleai.com.cn/).
 
 ```python
 from openai import OpenAI
@@ -107,51 +148,70 @@ client = OpenAI(
 response = client.chat.completions.create(
     model="Xing4.1-Preview",
     messages=[
-        {"role": "user", "content": "Write a single-file HTML page for a team-building cost estimator with live totals."}
+        {"role": "user", "content": "Build a single-file HTML page for estimating team-building costs: users check activities and enter headcount, and the page updates the breakdown, total, and per-person cost in real time."}
     ],
 )
 
 print(response.choices[0].message.content)
 ```
 
-- **Context window**: the public API serves the full **1M** context (up to **896K** input / **128K** output per request).
-- **Thinking mode**: supported as an on/off toggle (no effort tiers).
-- **Structured output & function calling**: supported through the OpenAI-compatible interface.
+- **Context window:** Supports a native 1M-token context window;
+- **Thinking mode:** Supports on/off (no tiered levels);
+- **Structured output and function calling:** Supported via the OpenAI-compatible API.
 
-**Recommended parameters:** `temperature=0.8`, `top_p=1.0`, `max_tokens=128K`.
+## Serving and Ecosystem
 
-## Self-hosting
+Xing4.1-Preview has a **different architecture from Xing4.0** (using MLA + DSA), but maintains upstream API compatibility with the Xing 4 series. Fine-tuning and serving ecosystems already integrated upstream for Xing4.0 can be directly reused for Xing4.1 (**llama.cpp and KTransformers only apply to the Xing4.0 series, not to Xing4.1-Preview**):
+
+| Framework | Xing4.1 Support | Date / Version | Usage |
+| --- | --- | --- | --- |
+| [ms-swift](https://github.com/modelscope/ms-swift) | Native — **v4.6.0+** | 2026-10-01 | Use the upstream ms-swift |
+| [SGLang](https://github.com/sgl-project/sglang) | Native — **main branch** | 2026-11-05 | Use the upstream SGLang main branch |
+| [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) | Native — **main branch** | 2026-10-29 | Use the upstream LLaMA-Factory main branch |
+| [vLLM](https://github.com/vllm-project/vllm) | Official out-of-tree plugin | — | [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin) |
+| [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) | Upstream PR under review | — | See the PR branch in the GitHub README |
+
+## Local Deployment
 
 > [!NOTE]
-> Xing4.1-Preview uses the Xing 4 family's serving stack. Replace `${MODEL_PATH}` with a local path or the hub id `XingChen-AGI/Xing4.1-Preview`. As a 285B BF16 MoE (~521 GiB), the weights alone need roughly **8×80 GB** GPUs at `--tensor-parallel-size 8`, and longer contexts need proportionally more. The native context is 1M — set the context flags (`--max-model-len` / `--context-length`) to what your hardware can hold. Parser identifiers and prebuilt image tags follow the official deployment guides in this repository ([vLLM](./tutorial/vLLM/xing4.1-preview-vllm_en.md) / [SGLang](./tutorial/SGLang/xing4.1-preview-sglang_en.md) / [FlagOS](./tutorial/FlagOS/xing4.1-preview-flagos.md)).
+> Xing4.1-Preview reuses the Xing 4 series serving stack. During deployment, replace `${MODEL_PATH}` with a local path or `XingChen-AGI/Xing4.1-Preview`. The model is a 285B-parameter MoE model; under BF16 precision, weights alone require approximately **8×80 GB** GPU memory (`--tensor-parallel-size 8`), with longer contexts requiring proportionally more resources. The native context length is 1M — set the context parameters (`--max-model-len` / `--context-length`) to whatever your GPU memory/nodes can support. For parser identifiers and pre-built image tags, refer to the official deployment documentation in this repository ([vLLM](./tutorial/vLLM/xing4.1-preview-vllm.md) / [SGLang](./tutorial/SGLang/xing4.1-preview-sglang.md) / [FlagOS](./tutorial/FlagOS/xing4.1-preview-flagos.md)).
 
-**vLLM** — official out-of-tree plugin ([XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin)). The model itself (`deepseek_v32`) is loaded natively by vLLM, while `xing4_0` reasoning / tool-call parsing is provided by the plugin; see the [vLLM deployment guide](./tutorial/vLLM/xing4.1-preview-vllm_en.md) for detailed steps, parameter descriptions, and call examples.
+**vLLM** — official out-of-tree plugin ([XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin)). For detailed deployment steps, parameter descriptions, and call examples, see the [vLLM deployment guide](./tutorial/vLLM/xing4.1-preview-vllm.md).
 
-**SGLang** — natively supported in the main branch with no extra plugin; see the [SGLang deployment guide](./tutorial/SGLang/xing4.1-preview-sglang_en.md) for detailed steps, parameter descriptions, and call examples.
+**SGLang** — natively supported on the main branch, no extra plugin needed; for detailed deployment steps, parameter descriptions, and call examples, see the [SGLang deployment guide](./tutorial/SGLang/xing4.1-preview-sglang.md).
 
-**FlagOS** — the community completed Day0 cross-chip adaptation for Xing4.1-Preview and provides a W8A8 build covering eight platforms; see the [FlagOS multi-chip deployment guide](./tutorial/FlagOS/xing4.1-preview-flagos.md) for installation, startup, and inference.
+**FlagOS** — the community completed Day0 cross-chip adaptation for Xing4.1-Preview, providing W8A8 builds covering eight platforms; for installation, startup, and inference, see the [FlagOS multi-chip deployment guide](./tutorial/FlagOS/xing4.1-preview-flagos.md).
 
-**vLLM-Ascend (Ascend NPU)** — deployment documentation will be added soon.
+**vLLM-Ascend (Ascend NPU)** — deployment documentation coming soon.
+
+# Recommended Parameters
+
+| Scenario | `temperature` | `top_p` | `repetition_penalty` |
+| --- | --- | --- | --- |
+| Agent / Code | 0.8 | 0.95 | 1.05 |
+| Reasoning | 1.0 | 0.95 | 1.05 |
+| General | 0.6 | 0.95 | 1.05 |
 
 # Use Cases
 
-- **Agentic collaborative work** — multi-step office workflows, cross-tool orchestration, and report generation that reconciles multiple conflicting sources.
-- **Deep research** — sustained, multi-source investigation with structured, auditable deliverables.
-- **Agentic coding** — complete frontend generation (single-file, zero-dependency, offline-runnable web apps), 3D and creative coding, and data-analysis pipelines.
-- **Document-heavy back-office** — schema-guided structured extraction for business systems.
+- **Agentic collaborative office work:** Multi-step office workflows, cross-tool orchestration, and structured report generation with multi-source material cross-verification;
+- **Deep research:** Sustained multi-source investigation, producing structured and verifiable deliverables;
+- **Agentic coding:** Complete frontend generation (single-file, zero-dependency, offline-ready web apps), 3D creative coding, data analysis and reporting;
+- **Document-heavy back-office:** Schema-guided structured information extraction, serving intelligent assistants, request routing, and document extraction.
 
 # Disclaimer
 
-Like all generative language models, Xing4.1-Preview can produce inaccurate or unexpected outputs. Outputs are generated automatically and do not represent the views of China Telecom. Verify important information independently. Do not use the model for any purpose that violates applicable laws and regulations.
+Like all generative language models, Xing4.1-Preview may produce inaccurate or unexpected outputs. Outputs are generated automatically by the model and do not represent the views of China Telecom. Please independently verify important information and do not use the model for purposes that violate applicable laws and regulations.
+
+Do not use Xing4 or its derivative models for any activity that endangers national security or public safety or violates laws and regulations, nor for internet services that have not undergone the required safety review and filing.
 
 # License & Citation
 
-Weights and code in this repository are released under the [Apache 2.0 License](./LICENSE).
+The weights and code in this repository are released under the [Apache 2.0](./LICENSE) license.
 
-## Related papers
+## Related Papers
 
 - **Xing4 Technical Report:** [TeleChat to Xing4: Advancing Frontier Agentic Models on Domestic Chips and Frameworks](https://arxiv.org/abs/2611.22115)
-- **cmHC:** [cmHC: Balancing Stream Mixing in Hyper-Connections via Geometric Contraction](https://arxiv.org/abs/2611.27193)
 
 ## Citation
 
@@ -170,6 +230,6 @@ Weights and code in this repository are released under the [Apache 2.0 License](
 ---
 
 <p align="center">
-  <b>Built by China Telecom AI Technology Co., Ltd.</b><br>
-  <a href="https://github.com/XingChen-AGI">XingChen-AGI Open-Source Organization</a>
+  <b>Developed by China Telecom AI Technology</b><br>
+  <a href="https://github.com/XingChen-AGI">XingChen-AGI Open Source Organization</a>
 </p>
