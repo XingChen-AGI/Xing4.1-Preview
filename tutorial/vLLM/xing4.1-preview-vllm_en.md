@@ -8,7 +8,7 @@
 - OpenAI-compatible API call examples
 - Startup parameter descriptions and inference parameter recommendations
 
-　　Xing4.1-Preview uses an architecture with `model_type` set to `deepseek_v32` (MLA + DSA). The model body can be loaded directly by an existing vLLM image; to correctly parse the Xing series' dedicated **reasoning-chain output** (the `<|thinking|>` content) and **tool-call format** (e.g. `<tool_call>`), this document installs the official out-of-tree plugin [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin). It only registers the `xing4_0` reasoning parser and tool-call parser with vLLM; it does not modify the vLLM source code, nor does it affect model loading.
+　　The Xing4.1-Preview model body can be loaded directly by an existing vLLM image; to correctly parse the Xing series' dedicated **reasoning-chain output** and **tool-call format**, this document installs the official out-of-tree plugin [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin). It only registers the `xing4_0` reasoning parser and tool-call parser with vLLM; it does not modify the vLLM source code, nor does it affect model loading.
 
 　　Xing4.1-Preview is a 285B BF16 MoE model with weights of approximately 521 GiB, requiring about **8×80 GB** of GPU memory just to load the weights. The startup commands in this document use `--tensor-parallel-size 8` as an example, which requires at least 8 GPUs.
 
@@ -31,14 +31,9 @@ docker run --rm --gpus all vllm/vllm-openai nvidia-smi
 
 ## Prepare the Base Image
 
-　　Pull a recent official vLLM image that includes DeepSeek-V3.2 (`deepseek_v32`) support:
-
 ```bash
 docker pull vllm/vllm-openai
 ```
-
-> [!NOTE]
-> Make sure the vLLM version you use has built-in DeepSeek-V3.2 support. Recent stable releases (e.g. v0.34.0 and above) and nightly builds usually include it; if startup reports `model_type 'deepseek_v32' is not supported`, upgrade to a newer version or install vLLM from the main source.
 
 ## Download the Xing4.1-Preview Model
 
@@ -87,7 +82,7 @@ docker run -d \
 ```bash
 pip install --no-deps "git+https://github.com/XingChen-AGI/xing4-vllm-plugin"
 
-python -c "from importlib.metadata import entry_points; \
+python3 -c "from importlib.metadata import entry_points; \
 print([(e.name, e.value) for e in entry_points(group='vllm.general_plugins')])"
 ```
 
@@ -122,7 +117,7 @@ VLLM_PLUGINS=xing4_0 vllm serve /models/Xing4.1-Preview \
 | `--port 8000` | API service port |
 | `--served-model-name` | Model name exposed externally; must match the value used when calling the API |
 | `--tensor-parallel-size 8` | Tensor parallelism degree; must match the number of available GPUs (the 285B weights require at least 8 cards) |
-| `--trust-remote-code` | Trust the remote code in the model repository (e.g. `modeling_deepseek`) |
+| `--trust-remote-code` | Trust the remote code in the model repository |
 | `--max-model-len` | Maximum context length; defaults to the model upper limit of 1M. Reduce it when memory is limited |
 | `--gpu-memory-utilization 0.90` | Upper bound on the GPU memory fraction to reserve; adjust based on available memory |
 | `--max-num-seqs 4` | Maximum number of concurrent requests |

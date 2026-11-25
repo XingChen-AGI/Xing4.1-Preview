@@ -8,11 +8,11 @@
 - OpenAI 兼容 API 调用示例
 - 启动参数说明与推理参数建议
 
-　　Xing4.1-Preview 采用与 Xing4.0 不同的架构配置（MLA + DSA，`model_type` 为 `deepseek_v32`）。SGLang 已在 **main 分支原生支持** Xing4.1-Preview（2026-11-05 起），无需额外安装插件即可加载与服务。
+　　Xing4.1-Preview 采用与 Xing4.0 不同的架构配置。SGLang 已在 **main 分支原生支持** Xing4.1-Preview（2026-11-05 起），无需额外安装插件即可加载与服务。
 
 　　官方镜像 `lmsysorg/sglang:dev` 持续从 main 构建，已包含 Xing4.1-Preview 适配，**直接拉取使用即可，无需在容器内额外安装任何依赖包**：
 
-- **方式一（推荐）**：使用官方 `lmsysorg/sglang:dev` 镜像，开箱即用。
+- **推荐**：使用官方 `lmsysorg/sglang:dev` 镜像，开箱即用。
 
 ## 环境准备
 
@@ -113,7 +113,7 @@ sglang serve --model-path /models/Xing4.1-Preview \
 | `--port 8000` | API 服务端口 |
 | `--served-model-name` | 对外暴露的模型名，调用 API 时需与之对应 |
 | `--tp-size 8` | 张量并行卡数，需与可用 GPU 数一致（285B 权重至少需 8 卡） |
-| `--trust-remote-code` | 信任模型仓库内的远程代码（`modeling_deepseek` 等） |
+| `--trust-remote-code` | 信任模型仓库内的远程代码（自定义 config / modeling 文件） |
 | `--context-length` | 最大上下文长度，默认取模型上限 1M；显存有限时请调小 |
 | `--mem-fraction-static 0.90` | 静态显存占用比例上限，按显存余量调整 |
 | `--max-running-requests 4` | 最大并发请求数 |

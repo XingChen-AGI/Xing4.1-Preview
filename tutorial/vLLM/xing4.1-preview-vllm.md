@@ -8,7 +8,7 @@
 - OpenAI 兼容 API 调用示例
 - 启动参数说明与推理参数建议
 
-　　Xing4.1-Preview 采用 `model_type` 为 `deepseek_v32` 的架构（MLA + DSA）。模型本体可被现有 vLLM 镜像直接加载；为正确解析 Xing 系列专属的**思维链输出**（`<|thinking|>` 内容）与**工具调用格式**（`<tool_call>` 等），本文安装官方 out-of-tree 插件 [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin)，它仅向 vLLM 注册 `xing4_0` 推理 parser 与工具调用 parser，不修改 vLLM 源码、也不影响模型加载。
+　　Xing4.1-Preview 模型本体可被现有 vLLM 镜像直接加载；为正确解析 Xing 系列专属的**思维链输出**与**工具调用格式**，本文安装官方 out-of-tree 插件 [XingChen-AGI/xing4-vllm-plugin](https://github.com/XingChen-AGI/xing4-vllm-plugin)，它仅向 vLLM 注册 `xing4_0` 推理 parser 与工具调用 parser，不修改 vLLM 源码、也不影响模型加载。
 
 　　Xing4.1-Preview 为 285B BF16 MoE 模型，权重约 521 GiB，仅加载权重即需约 **8×80 GB** 显存。本文启动命令以 `--tensor-parallel-size 8` 为例，需要至少 8 张 GPU。
 
@@ -31,14 +31,9 @@ docker run --rm --gpus all vllm/vllm-openai nvidia-smi
 
 ## 准备基础镜像
 
-　　拉取包含 DeepSeek-V3.2（`deepseek_v32`）支持的近期 vLLM 官方镜像：
-
 ```bash
 docker pull vllm/vllm-openai
 ```
-
-> [!NOTE]
-> 请确保所用 vLLM 版本已内置 DeepSeek-V3.2 支持。近期正式版（如 v0.34.0 及以上）与 nightly 构建通常已包含；若启动时报 `model_type 'deepseek_v32' is not supported`，请升级到更新版本或从 main 源码安装 vLLM。
 
 ## 下载 Xing4.1-Preview 模型
 
@@ -87,7 +82,7 @@ docker run -d \
 ```bash
 pip install --no-deps "git+https://github.com/XingChen-AGI/xing4-vllm-plugin"
 
-python -c "from importlib.metadata import entry_points; \
+python3 -c "from importlib.metadata import entry_points; \
 print([(e.name, e.value) for e in entry_points(group='vllm.general_plugins')])"
 ```
 
@@ -122,7 +117,7 @@ VLLM_PLUGINS=xing4_0 vllm serve /models/Xing4.1-Preview \
 | `--port 8000` | API 服务端口 |
 | `--served-model-name` | 对外暴露的模型名，调用 API 时需与之对应 |
 | `--tensor-parallel-size 8` | 张量并行卡数，需与可用 GPU 数一致（285B 权重至少需 8 卡） |
-| `--trust-remote-code` | 信任模型仓库内的远程代码（`modeling_deepseek` 等） |
+| `--trust-remote-code` | 信任模型仓库内的远程代码 |
 | `--max-model-len` | 最大上下文长度，默认取模型上限 1M；显存有限时请调小 |
 | `--gpu-memory-utilization 0.90` | 预留显存比例上限，按显存余量调整 |
 | `--max-num-seqs 4` | 最大并发请求数 |
@@ -189,7 +184,3 @@ curl http://localhost:8000/v1/chat/completions \
 - 确认插件安装在与 `vllm` 相同的 Python 环境中（容器内需使用镜像自带的 python/pip），且入口点列表包含 `('xing4_0', ...)`
 - 启动时显式加上 `VLLM_PLUGINS=xing4_0` 以允许加载该插件
 - 若日志中出现插件 stand-down 提示，说明当前 vLLM 已内置同名实现，可忽略
-
-### 报 model_type 'deepseek_v32' is not supported
-
-- 所用 vLLM 版本过旧，尚未内置 DeepSeek-V3.2 支持；请升级到近期正式版或 nightly，或从 main 源码安装 vLLM

@@ -8,11 +8,11 @@
 - OpenAI-compatible API call examples
 - Startup parameter descriptions and inference parameter recommendations
 
-　　Xing4.1-Preview uses a different architecture configuration from Xing4.0 (MLA + DSA, with `model_type` set to `deepseek_v32`). SGLang has **natively supported** Xing4.1-Preview on the **main branch** (since 2026-11-05), so it can be loaded and served without installing any additional plugin.
+　　Xing4.1-Preview uses a different architecture configuration from Xing4.0. SGLang has **natively supported** Xing4.1-Preview on the **main branch** (since 2026-11-05), so it can be loaded and served without installing any additional plugin.
 
 　　The official image `lmsysorg/sglang:dev` is built continuously from main and already includes the Xing4.1-Preview adaptation. **Just pull and use it — no extra dependency installation is needed inside the container**:
 
-- **Method 1 (recommended):** Use the official `lmsysorg/sglang:dev` image, ready to use out of the box.
+- **Recommended:** Use the official `lmsysorg/sglang:dev` image, ready to use out of the box.
 
 ## Prerequisites
 
@@ -113,7 +113,7 @@ sglang serve --model-path /models/Xing4.1-Preview \
 | `--port 8000` | API service port |
 | `--served-model-name` | Model name exposed externally; must match the value used when calling the API |
 | `--tp-size 8` | Tensor parallelism degree; must match the number of available GPUs (the 285B weights require at least 8 cards) |
-| `--trust-remote-code` | Trust the remote code in the model repository (e.g. `modeling_deepseek`) |
+| `--trust-remote-code` | Trust the remote code in the model repository (custom config / modeling files) |
 | `--context-length` | Maximum context length; defaults to the model upper limit of 1M. Reduce it when memory is limited |
 | `--mem-fraction-static 0.90` | Upper bound on the static memory fraction; adjust based on available memory |
 | `--max-running-requests 4` | Maximum number of concurrent requests |
